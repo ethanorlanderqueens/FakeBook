@@ -3,8 +3,10 @@ import { prisma } from "@/prisma-client";
 export const resolvers = {
 	Query: {
 		login: async (parent, args, { prisma }) => {
-			const resp = await prisma.users.where({
-				AND: [{ email: args.data.email }, { password: args.data.password }],
+			const resp = await prisma.users({
+				where: {
+					AND: [{ email: args.data.email }, { password: args.data.password }],
+				},
 			});
 			if (resp[0]) {
 				return {
