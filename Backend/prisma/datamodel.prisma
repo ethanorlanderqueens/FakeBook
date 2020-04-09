@@ -1,0 +1,53 @@
+type User {
+  id: ID! @id
+  fullName: String!
+  email: String! @unique
+  password: String!
+  conversations: [ Conversation ]
+  friends: [ User ]!
+}
+
+type Post {
+  id: ID! @id
+  createdBy: User! @relation(link: INLINE, name: "PostCreatedBy")
+  createdAt: DateTime! @createdAt
+  likes: [ User ]! @relation(name: "PostLikes")
+  comments: [ Comment ]!
+}
+
+type Comment {
+  id: ID! @id
+  post: Post! @relation(link: INLINE)  
+  createdBy: User! @relation(link: INLINE)
+  createdAt: DateTime! @createdAt
+  content: String!
+}
+
+type FriendRequest {
+  id: ID! @id
+  fromUser: User! @relation(link: INLINE, name: "FriendRequestFromUser") 
+  toUser: User! @relation(link: INLINE, name: "FriendRequestToUser")
+  createdAt: DateTime! @createdAt
+  accepted: Boolean! @default(value: false)
+}
+
+type Conversation {
+  id: ID! @id
+  users: [ User! ]!
+  messages: [ Message! ]!
+  createdAt: DateTime! @createdAt
+}
+
+type UnreadConversations {
+  id: ID! @id
+  conversation: Conversation! @relation(link: INLINE)
+  user: User! @relation(link: INLINE)
+}
+
+type Message {
+  id: ID! @id
+  user: User! @relation(link: INLINE)
+  conversation: Conversation! @relation(link: INLINE)
+  content: String!
+  createdAt: DateTime! @createdAt
+}

@@ -1,0 +1,51 @@
+version: "3.7"
+
+services:
+  prisma:
+    image: prismagraphql/prisma:1.34
+    restart: always
+    container_name: prisma-server
+    hostname: prisma-server
+    networks:
+      - prisma-server
+    ports:
+      - "4466:4466"
+    environment:
+      PRISMA_SECRET:
+      PRISMA_CONFIG: |
+        port: 4466
+        # uncomment the next line and provide the env var PRISMA_MANAGEMENT_API_SECRET=my-secret to activate cluster security
+        # managementApiSecret: 8bcq7nvxz390fasd89fyasdyfa9s8ydf
+        databases:
+          default:
+            connector: postgres
+            host: sebisdum.postgres.database.azure.com
+            user: sa@sebisdum
+            password: ${SA_PASSWORD}
+            port: 5432
+            migrations: true
+            database: app
+  dev-api-gql:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: api-gql:dev-latest
+    container_name: dev-api-gql
+    hostname: dev-api-gql
+    networks:
+     - prisma-server
+     - dev-api-gql
+    volumes:
+      - ./app:/app:delegated
+      - /app/node_modules/
+    restart: on-failure
+    ports:
+      - "80:80"
+
+networks:
+  dev-api-gql:
+    name: dev-api-gql
+    driver: bridge
+  prisma-server:
+    name: prisma-server
+    driver: bridge
