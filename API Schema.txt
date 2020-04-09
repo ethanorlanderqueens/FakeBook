@@ -1,0 +1,145 @@
+Types
+    Error {
+        code: Int!
+        message: String!
+    } 
+    User {
+        id: ID!
+        fullName: String!
+        email: String!
+        conversations: [ Conversation ]!
+        friends: [ User ]!
+    }
+    Post {
+        id: ID!
+        createdBy: User!
+        createdAt: Double!
+        likes: [ User ]!
+        comments: [ Comment ]!
+    }
+    Comment {
+        id: ID!
+        post: Post!
+        createdBy: User!
+        createdAt: Double!
+        content: String!
+    }
+    FriendRequest {
+        fromUser: ID!
+        toUser: ID!
+        accepted: Boolean! @default(value: False)
+        createdAt: Double!
+    }
+    Conversation {
+        users: [ User! ]!
+        messages: [ Message ]!
+        createdAt: Double!
+    }
+    Message {
+        user: User!
+        conversation: Conversation!
+        content: String!
+        createdAt: Double!
+    }
+ 
+Queries
+    login(data: {
+        email: String!
+        password: String!
+    }): {
+        error: Error
+        success: Boolean!
+    }
+    feed(data: {
+        userID: ID!
+        error: Error
+    }): [ Post ]!
+    users(data: {
+        id: ID
+        fullName: String
+    }): {
+        user: User
+        error: Error
+    }
+    friends(data: {
+        userID: ID!
+    }): {
+        user: [ User ]!
+        error: Error
+    }
+    friendRequests(data: {
+        userID: ID!
+    }): {
+        user: [ User ]!
+        error: Error
+    }
+    conversations(data: {
+        user: ID!
+    }): {
+        conversations: [ Conversation ]!
+        error: Error
+    }
+    conversation(data: {
+        conversationID: ID!
+    }): {
+        conversation: Conversation
+        error: Error
+    }
+    
+Mutations
+    register(data: {
+        fullName: String!
+        email: String!
+    }): {
+        user: User
+        error: Error
+    }
+    createPost(data: {
+        createdBy: ID!
+        content: String!
+        error: Error
+    }): Post
+    likePost(data: {
+        user: ID!
+        post: ID!
+    }): {
+        success: Boolean!
+        error: Error
+    }
+    addComment(data: {
+        user: ID!
+        post: ID!
+        comment: String!
+    }): {
+        comment: Comment
+        error: Error
+    } 
+    requestFriend(data: {
+        fromUser: ID!
+        toUser: ID!
+    }): {
+        friendRequest: FriendRequest
+        error: Error
+    }
+    removeFriend(data: {
+        me: ID!
+        friend: ID!
+    }): {
+        success: Boolean!
+        error: Error
+    }
+    respondToFriendRequest(data: {
+        friendRequest: ID!
+        accept: Boolean!
+    }): {
+        friendRequest: FriendRequest
+        error: Error 
+    }
+    sendMessage(data: {
+        conversationID: ID!
+        userID: ID!
+        messageContent: String!
+    }): {
+        message: Message
+        error: Error
+    }
