@@ -28,13 +28,13 @@ export const typeDef = gql`
         email: String!
         password: String!
     }
-
+    //TODO Add conversations, outgoingFriendRequests, incomingFriendRequests
     type User {
         id: ID!
         fullName: String!
         email: String!
-        conversations: [ Conversation ]!
         friends: [ User ]!
+        posts: [ Post ]!
     }
     type loginResponse {
         success: Boolean!
@@ -43,9 +43,6 @@ export const typeDef = gql`
     type registerResponse {
         success: Boolean!
         user: User
-    }
-    type Conversation {
-        derp: String
     }
 
 `;

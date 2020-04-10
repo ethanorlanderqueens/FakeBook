@@ -5,12 +5,16 @@ type User {
   password: String!
   conversations: [ Conversation ]
   friends: [ User ]!
+  posts: [ Post ]! @relation(name: "PostCreatedBy")
+  outgoingFriendRequests: [ FriendRequest ]! @relation(name: "FriendRequestFromUser")
+  incomingFriendRequests: [ FriendRequest ]! @relation(name: "FriendRequestToUser")
 }
 
 type Post {
   id: ID! @id
   createdBy: User! @relation(link: INLINE, name: "PostCreatedBy")
   createdAt: DateTime! @createdAt
+  content: String!
   likes: [ User ]! @relation(name: "PostLikes")
   comments: [ Comment ]!
 }

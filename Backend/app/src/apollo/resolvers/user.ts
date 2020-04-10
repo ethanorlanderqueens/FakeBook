@@ -1,5 +1,3 @@
-import { prisma } from "@/prisma-client";
-
 export const resolvers = {
 	Query: {
 		login: async (parent, args, { prisma }) => {
@@ -42,5 +40,11 @@ export const resolvers = {
 				};
 			}
 		},
+	},
+	User: {
+		posts: async (parent, args, { prisma }) =>
+			await prisma.user({ id: parent.id }).posts(),
+		friends: async (parent, args, { prisma }) =>
+			await prisma.user({ id: parent.id }).friends(),
 	},
 };

@@ -43,5 +43,9 @@ exports.resolvers = {
             }
         },
     },
+    User: {
+        posts: async (parent, args, { prisma }) => await prisma.user({ id: parent.id }).posts(),
+        friends: async (parent, args, { prisma }) => await prisma.user({ id: parent.id }).friends(),
+    },
 };
 //# sourceMappingURL=user.js.map

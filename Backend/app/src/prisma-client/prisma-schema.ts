@@ -468,8 +468,30 @@ type FriendRequestConnection {
 
 input FriendRequestCreateInput {
   id: ID
-  fromUser: UserCreateOneInput!
-  toUser: UserCreateOneInput!
+  fromUser: UserCreateOneWithoutOutgoingFriendRequestsInput!
+  toUser: UserCreateOneWithoutIncomingFriendRequestsInput!
+  accepted: Boolean
+}
+
+input FriendRequestCreateManyWithoutFromUserInput {
+  create: [FriendRequestCreateWithoutFromUserInput!]
+  connect: [FriendRequestWhereUniqueInput!]
+}
+
+input FriendRequestCreateManyWithoutToUserInput {
+  create: [FriendRequestCreateWithoutToUserInput!]
+  connect: [FriendRequestWhereUniqueInput!]
+}
+
+input FriendRequestCreateWithoutFromUserInput {
+  id: ID
+  toUser: UserCreateOneWithoutIncomingFriendRequestsInput!
+  accepted: Boolean
+}
+
+input FriendRequestCreateWithoutToUserInput {
+  id: ID
+  fromUser: UserCreateOneWithoutOutgoingFriendRequestsInput!
   accepted: Boolean
 }
 
@@ -493,6 +515,36 @@ type FriendRequestPreviousValues {
   accepted: Boolean!
 }
 
+input FriendRequestScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  accepted: Boolean
+  accepted_not: Boolean
+  AND: [FriendRequestScalarWhereInput!]
+  OR: [FriendRequestScalarWhereInput!]
+  NOT: [FriendRequestScalarWhereInput!]
+}
+
 type FriendRequestSubscriptionPayload {
   mutation: MutationType!
   node: FriendRequest
@@ -512,13 +564,78 @@ input FriendRequestSubscriptionWhereInput {
 }
 
 input FriendRequestUpdateInput {
-  fromUser: UserUpdateOneRequiredInput
-  toUser: UserUpdateOneRequiredInput
+  fromUser: UserUpdateOneRequiredWithoutOutgoingFriendRequestsInput
+  toUser: UserUpdateOneRequiredWithoutIncomingFriendRequestsInput
+  accepted: Boolean
+}
+
+input FriendRequestUpdateManyDataInput {
   accepted: Boolean
 }
 
 input FriendRequestUpdateManyMutationInput {
   accepted: Boolean
+}
+
+input FriendRequestUpdateManyWithoutFromUserInput {
+  create: [FriendRequestCreateWithoutFromUserInput!]
+  delete: [FriendRequestWhereUniqueInput!]
+  connect: [FriendRequestWhereUniqueInput!]
+  set: [FriendRequestWhereUniqueInput!]
+  disconnect: [FriendRequestWhereUniqueInput!]
+  update: [FriendRequestUpdateWithWhereUniqueWithoutFromUserInput!]
+  upsert: [FriendRequestUpsertWithWhereUniqueWithoutFromUserInput!]
+  deleteMany: [FriendRequestScalarWhereInput!]
+  updateMany: [FriendRequestUpdateManyWithWhereNestedInput!]
+}
+
+input FriendRequestUpdateManyWithoutToUserInput {
+  create: [FriendRequestCreateWithoutToUserInput!]
+  delete: [FriendRequestWhereUniqueInput!]
+  connect: [FriendRequestWhereUniqueInput!]
+  set: [FriendRequestWhereUniqueInput!]
+  disconnect: [FriendRequestWhereUniqueInput!]
+  update: [FriendRequestUpdateWithWhereUniqueWithoutToUserInput!]
+  upsert: [FriendRequestUpsertWithWhereUniqueWithoutToUserInput!]
+  deleteMany: [FriendRequestScalarWhereInput!]
+  updateMany: [FriendRequestUpdateManyWithWhereNestedInput!]
+}
+
+input FriendRequestUpdateManyWithWhereNestedInput {
+  where: FriendRequestScalarWhereInput!
+  data: FriendRequestUpdateManyDataInput!
+}
+
+input FriendRequestUpdateWithoutFromUserDataInput {
+  toUser: UserUpdateOneRequiredWithoutIncomingFriendRequestsInput
+  accepted: Boolean
+}
+
+input FriendRequestUpdateWithoutToUserDataInput {
+  fromUser: UserUpdateOneRequiredWithoutOutgoingFriendRequestsInput
+  accepted: Boolean
+}
+
+input FriendRequestUpdateWithWhereUniqueWithoutFromUserInput {
+  where: FriendRequestWhereUniqueInput!
+  data: FriendRequestUpdateWithoutFromUserDataInput!
+}
+
+input FriendRequestUpdateWithWhereUniqueWithoutToUserInput {
+  where: FriendRequestWhereUniqueInput!
+  data: FriendRequestUpdateWithoutToUserDataInput!
+}
+
+input FriendRequestUpsertWithWhereUniqueWithoutFromUserInput {
+  where: FriendRequestWhereUniqueInput!
+  update: FriendRequestUpdateWithoutFromUserDataInput!
+  create: FriendRequestCreateWithoutFromUserInput!
+}
+
+input FriendRequestUpsertWithWhereUniqueWithoutToUserInput {
+  where: FriendRequestWhereUniqueInput!
+  update: FriendRequestUpdateWithoutToUserDataInput!
+  create: FriendRequestCreateWithoutToUserInput!
 }
 
 input FriendRequestWhereInput {
@@ -792,6 +909,7 @@ type Mutation {
   deleteManyMessages(where: MessageWhereInput): BatchPayload!
   createPost(data: PostCreateInput!): Post!
   updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
+  updateManyPosts(data: PostUpdateManyMutationInput!, where: PostWhereInput): BatchPayload!
   upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
   deletePost(where: PostWhereUniqueInput!): Post
   deleteManyPosts(where: PostWhereInput): BatchPayload!
@@ -829,6 +947,7 @@ type Post {
   id: ID!
   createdBy: User!
   createdAt: DateTime!
+  content: String!
   likes(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
 }
@@ -841,9 +960,15 @@ type PostConnection {
 
 input PostCreateInput {
   id: ID
-  createdBy: UserCreateOneInput!
+  createdBy: UserCreateOneWithoutPostsInput!
+  content: String!
   likes: UserCreateManyInput
   comments: CommentCreateManyWithoutPostInput
+}
+
+input PostCreateManyWithoutCreatedByInput {
+  create: [PostCreateWithoutCreatedByInput!]
+  connect: [PostWhereUniqueInput!]
 }
 
 input PostCreateOneWithoutCommentsInput {
@@ -853,8 +978,16 @@ input PostCreateOneWithoutCommentsInput {
 
 input PostCreateWithoutCommentsInput {
   id: ID
-  createdBy: UserCreateOneInput!
+  createdBy: UserCreateOneWithoutPostsInput!
+  content: String!
   likes: UserCreateManyInput
+}
+
+input PostCreateWithoutCreatedByInput {
+  id: ID
+  content: String!
+  likes: UserCreateManyInput
+  comments: CommentCreateManyWithoutPostInput
 }
 
 type PostEdge {
@@ -867,11 +1000,56 @@ enum PostOrderByInput {
   id_DESC
   createdAt_ASC
   createdAt_DESC
+  content_ASC
+  content_DESC
 }
 
 type PostPreviousValues {
   id: ID!
   createdAt: DateTime!
+  content: String!
+}
+
+input PostScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  content: String
+  content_not: String
+  content_in: [String!]
+  content_not_in: [String!]
+  content_lt: String
+  content_lte: String
+  content_gt: String
+  content_gte: String
+  content_contains: String
+  content_not_contains: String
+  content_starts_with: String
+  content_not_starts_with: String
+  content_ends_with: String
+  content_not_ends_with: String
+  AND: [PostScalarWhereInput!]
+  OR: [PostScalarWhereInput!]
+  NOT: [PostScalarWhereInput!]
 }
 
 type PostSubscriptionPayload {
@@ -893,9 +1071,35 @@ input PostSubscriptionWhereInput {
 }
 
 input PostUpdateInput {
-  createdBy: UserUpdateOneRequiredInput
+  createdBy: UserUpdateOneRequiredWithoutPostsInput
+  content: String
   likes: UserUpdateManyInput
   comments: CommentUpdateManyWithoutPostInput
+}
+
+input PostUpdateManyDataInput {
+  content: String
+}
+
+input PostUpdateManyMutationInput {
+  content: String
+}
+
+input PostUpdateManyWithoutCreatedByInput {
+  create: [PostCreateWithoutCreatedByInput!]
+  delete: [PostWhereUniqueInput!]
+  connect: [PostWhereUniqueInput!]
+  set: [PostWhereUniqueInput!]
+  disconnect: [PostWhereUniqueInput!]
+  update: [PostUpdateWithWhereUniqueWithoutCreatedByInput!]
+  upsert: [PostUpsertWithWhereUniqueWithoutCreatedByInput!]
+  deleteMany: [PostScalarWhereInput!]
+  updateMany: [PostUpdateManyWithWhereNestedInput!]
+}
+
+input PostUpdateManyWithWhereNestedInput {
+  where: PostScalarWhereInput!
+  data: PostUpdateManyDataInput!
 }
 
 input PostUpdateOneRequiredWithoutCommentsInput {
@@ -906,13 +1110,31 @@ input PostUpdateOneRequiredWithoutCommentsInput {
 }
 
 input PostUpdateWithoutCommentsDataInput {
-  createdBy: UserUpdateOneRequiredInput
+  createdBy: UserUpdateOneRequiredWithoutPostsInput
+  content: String
   likes: UserUpdateManyInput
+}
+
+input PostUpdateWithoutCreatedByDataInput {
+  content: String
+  likes: UserUpdateManyInput
+  comments: CommentUpdateManyWithoutPostInput
+}
+
+input PostUpdateWithWhereUniqueWithoutCreatedByInput {
+  where: PostWhereUniqueInput!
+  data: PostUpdateWithoutCreatedByDataInput!
 }
 
 input PostUpsertWithoutCommentsInput {
   update: PostUpdateWithoutCommentsDataInput!
   create: PostCreateWithoutCommentsInput!
+}
+
+input PostUpsertWithWhereUniqueWithoutCreatedByInput {
+  where: PostWhereUniqueInput!
+  update: PostUpdateWithoutCreatedByDataInput!
+  create: PostCreateWithoutCreatedByInput!
 }
 
 input PostWhereInput {
@@ -939,6 +1161,20 @@ input PostWhereInput {
   createdAt_lte: DateTime
   createdAt_gt: DateTime
   createdAt_gte: DateTime
+  content: String
+  content_not: String
+  content_in: [String!]
+  content_not_in: [String!]
+  content_lt: String
+  content_lte: String
+  content_gt: String
+  content_gte: String
+  content_contains: String
+  content_not_contains: String
+  content_starts_with: String
+  content_not_starts_with: String
+  content_ends_with: String
+  content_not_ends_with: String
   likes_every: UserWhereInput
   likes_some: UserWhereInput
   likes_none: UserWhereInput
@@ -1077,6 +1313,9 @@ type User {
   password: String!
   conversations(where: ConversationWhereInput, orderBy: ConversationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Conversation!]
   friends(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
+  outgoingFriendRequests(where: FriendRequestWhereInput, orderBy: FriendRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FriendRequest!]
+  incomingFriendRequests(where: FriendRequestWhereInput, orderBy: FriendRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FriendRequest!]
 }
 
 type UserConnection {
@@ -1092,6 +1331,9 @@ input UserCreateInput {
   password: String!
   conversations: ConversationCreateManyWithoutUsersInput
   friends: UserCreateManyInput
+  posts: PostCreateManyWithoutCreatedByInput
+  outgoingFriendRequests: FriendRequestCreateManyWithoutFromUserInput
+  incomingFriendRequests: FriendRequestCreateManyWithoutToUserInput
 }
 
 input UserCreateManyInput {
@@ -1109,12 +1351,63 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutIncomingFriendRequestsInput {
+  create: UserCreateWithoutIncomingFriendRequestsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutOutgoingFriendRequestsInput {
+  create: UserCreateWithoutOutgoingFriendRequestsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutPostsInput {
+  create: UserCreateWithoutPostsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateWithoutConversationsInput {
   id: ID
   fullName: String!
   email: String!
   password: String!
   friends: UserCreateManyInput
+  posts: PostCreateManyWithoutCreatedByInput
+  outgoingFriendRequests: FriendRequestCreateManyWithoutFromUserInput
+  incomingFriendRequests: FriendRequestCreateManyWithoutToUserInput
+}
+
+input UserCreateWithoutIncomingFriendRequestsInput {
+  id: ID
+  fullName: String!
+  email: String!
+  password: String!
+  conversations: ConversationCreateManyWithoutUsersInput
+  friends: UserCreateManyInput
+  posts: PostCreateManyWithoutCreatedByInput
+  outgoingFriendRequests: FriendRequestCreateManyWithoutFromUserInput
+}
+
+input UserCreateWithoutOutgoingFriendRequestsInput {
+  id: ID
+  fullName: String!
+  email: String!
+  password: String!
+  conversations: ConversationCreateManyWithoutUsersInput
+  friends: UserCreateManyInput
+  posts: PostCreateManyWithoutCreatedByInput
+  incomingFriendRequests: FriendRequestCreateManyWithoutToUserInput
+}
+
+input UserCreateWithoutPostsInput {
+  id: ID
+  fullName: String!
+  email: String!
+  password: String!
+  conversations: ConversationCreateManyWithoutUsersInput
+  friends: UserCreateManyInput
+  outgoingFriendRequests: FriendRequestCreateManyWithoutFromUserInput
+  incomingFriendRequests: FriendRequestCreateManyWithoutToUserInput
 }
 
 type UserEdge {
@@ -1226,6 +1519,9 @@ input UserUpdateDataInput {
   password: String
   conversations: ConversationUpdateManyWithoutUsersInput
   friends: UserUpdateManyInput
+  posts: PostUpdateManyWithoutCreatedByInput
+  outgoingFriendRequests: FriendRequestUpdateManyWithoutFromUserInput
+  incomingFriendRequests: FriendRequestUpdateManyWithoutToUserInput
 }
 
 input UserUpdateInput {
@@ -1234,6 +1530,9 @@ input UserUpdateInput {
   password: String
   conversations: ConversationUpdateManyWithoutUsersInput
   friends: UserUpdateManyInput
+  posts: PostUpdateManyWithoutCreatedByInput
+  outgoingFriendRequests: FriendRequestUpdateManyWithoutFromUserInput
+  incomingFriendRequests: FriendRequestUpdateManyWithoutToUserInput
 }
 
 input UserUpdateManyDataInput {
@@ -1284,11 +1583,65 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
 }
 
+input UserUpdateOneRequiredWithoutIncomingFriendRequestsInput {
+  create: UserCreateWithoutIncomingFriendRequestsInput
+  update: UserUpdateWithoutIncomingFriendRequestsDataInput
+  upsert: UserUpsertWithoutIncomingFriendRequestsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateOneRequiredWithoutOutgoingFriendRequestsInput {
+  create: UserCreateWithoutOutgoingFriendRequestsInput
+  update: UserUpdateWithoutOutgoingFriendRequestsDataInput
+  upsert: UserUpsertWithoutOutgoingFriendRequestsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateOneRequiredWithoutPostsInput {
+  create: UserCreateWithoutPostsInput
+  update: UserUpdateWithoutPostsDataInput
+  upsert: UserUpsertWithoutPostsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserUpdateWithoutConversationsDataInput {
   fullName: String
   email: String
   password: String
   friends: UserUpdateManyInput
+  posts: PostUpdateManyWithoutCreatedByInput
+  outgoingFriendRequests: FriendRequestUpdateManyWithoutFromUserInput
+  incomingFriendRequests: FriendRequestUpdateManyWithoutToUserInput
+}
+
+input UserUpdateWithoutIncomingFriendRequestsDataInput {
+  fullName: String
+  email: String
+  password: String
+  conversations: ConversationUpdateManyWithoutUsersInput
+  friends: UserUpdateManyInput
+  posts: PostUpdateManyWithoutCreatedByInput
+  outgoingFriendRequests: FriendRequestUpdateManyWithoutFromUserInput
+}
+
+input UserUpdateWithoutOutgoingFriendRequestsDataInput {
+  fullName: String
+  email: String
+  password: String
+  conversations: ConversationUpdateManyWithoutUsersInput
+  friends: UserUpdateManyInput
+  posts: PostUpdateManyWithoutCreatedByInput
+  incomingFriendRequests: FriendRequestUpdateManyWithoutToUserInput
+}
+
+input UserUpdateWithoutPostsDataInput {
+  fullName: String
+  email: String
+  password: String
+  conversations: ConversationUpdateManyWithoutUsersInput
+  friends: UserUpdateManyInput
+  outgoingFriendRequests: FriendRequestUpdateManyWithoutFromUserInput
+  incomingFriendRequests: FriendRequestUpdateManyWithoutToUserInput
 }
 
 input UserUpdateWithWhereUniqueNestedInput {
@@ -1304,6 +1657,21 @@ input UserUpdateWithWhereUniqueWithoutConversationsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutIncomingFriendRequestsInput {
+  update: UserUpdateWithoutIncomingFriendRequestsDataInput!
+  create: UserCreateWithoutIncomingFriendRequestsInput!
+}
+
+input UserUpsertWithoutOutgoingFriendRequestsInput {
+  update: UserUpdateWithoutOutgoingFriendRequestsDataInput!
+  create: UserCreateWithoutOutgoingFriendRequestsInput!
+}
+
+input UserUpsertWithoutPostsInput {
+  update: UserUpdateWithoutPostsDataInput!
+  create: UserCreateWithoutPostsInput!
 }
 
 input UserUpsertWithWhereUniqueNestedInput {
@@ -1381,6 +1749,15 @@ input UserWhereInput {
   friends_every: UserWhereInput
   friends_some: UserWhereInput
   friends_none: UserWhereInput
+  posts_every: PostWhereInput
+  posts_some: PostWhereInput
+  posts_none: PostWhereInput
+  outgoingFriendRequests_every: FriendRequestWhereInput
+  outgoingFriendRequests_some: FriendRequestWhereInput
+  outgoingFriendRequests_none: FriendRequestWhereInput
+  incomingFriendRequests_every: FriendRequestWhereInput
+  incomingFriendRequests_some: FriendRequestWhereInput
+  incomingFriendRequests_none: FriendRequestWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

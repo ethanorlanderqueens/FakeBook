@@ -98,7 +98,6 @@ Mutations
     createPost(data: {
         createdBy: ID!
         content: String!
-        error: Error
     }): Post
     likePost(data: {
         user: ID!

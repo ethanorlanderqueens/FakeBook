@@ -264,6 +264,10 @@ export interface Prisma {
     data: PostUpdateInput;
     where: PostWhereUniqueInput;
   }) => PostPromise;
+  updateManyPosts: (args: {
+    data: PostUpdateManyMutationInput;
+    where?: PostWhereInput;
+  }) => BatchPayloadPromise;
   upsertPost: (args: {
     where: PostWhereUniqueInput;
     create: PostCreateInput;
@@ -369,7 +373,7 @@ export type MessageOrderByInput =
   | "createdAt_ASC"
   | "createdAt_DESC";
 
-export type CommentOrderByInput =
+export type PostOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "createdAt_ASC"
@@ -385,11 +389,13 @@ export type FriendRequestOrderByInput =
   | "accepted_ASC"
   | "accepted_DESC";
 
-export type PostOrderByInput =
+export type CommentOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "createdAt_ASC"
-  | "createdAt_DESC";
+  | "createdAt_DESC"
+  | "content_ASC"
+  | "content_DESC";
 
 export type UnreadConversationsOrderByInput = "id_ASC" | "id_DESC";
 
@@ -496,12 +502,21 @@ export interface UserWhereInput {
   friends_every?: Maybe<UserWhereInput>;
   friends_some?: Maybe<UserWhereInput>;
   friends_none?: Maybe<UserWhereInput>;
+  posts_every?: Maybe<PostWhereInput>;
+  posts_some?: Maybe<PostWhereInput>;
+  posts_none?: Maybe<PostWhereInput>;
+  outgoingFriendRequests_every?: Maybe<FriendRequestWhereInput>;
+  outgoingFriendRequests_some?: Maybe<FriendRequestWhereInput>;
+  outgoingFriendRequests_none?: Maybe<FriendRequestWhereInput>;
+  incomingFriendRequests_every?: Maybe<FriendRequestWhereInput>;
+  incomingFriendRequests_some?: Maybe<FriendRequestWhereInput>;
+  incomingFriendRequests_none?: Maybe<FriendRequestWhereInput>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
 }
 
-export interface MessageWhereInput {
+export interface PostWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -516,8 +531,15 @@ export interface MessageWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  user?: Maybe<UserWhereInput>;
-  conversation?: Maybe<ConversationWhereInput>;
+  createdBy?: Maybe<UserWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
   content?: Maybe<String>;
   content_not?: Maybe<String>;
   content_in?: Maybe<String[] | String>;
@@ -532,17 +554,15 @@ export interface MessageWhereInput {
   content_not_starts_with?: Maybe<String>;
   content_ends_with?: Maybe<String>;
   content_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<MessageWhereInput[] | MessageWhereInput>;
-  OR?: Maybe<MessageWhereInput[] | MessageWhereInput>;
-  NOT?: Maybe<MessageWhereInput[] | MessageWhereInput>;
+  likes_every?: Maybe<UserWhereInput>;
+  likes_some?: Maybe<UserWhereInput>;
+  likes_none?: Maybe<UserWhereInput>;
+  comments_every?: Maybe<CommentWhereInput>;
+  comments_some?: Maybe<CommentWhereInput>;
+  comments_none?: Maybe<CommentWhereInput>;
+  AND?: Maybe<PostWhereInput[] | PostWhereInput>;
+  OR?: Maybe<PostWhereInput[] | PostWhereInput>;
+  NOT?: Maybe<PostWhereInput[] | PostWhereInput>;
 }
 
 export interface CommentWhereInput {
@@ -589,49 +609,6 @@ export interface CommentWhereInput {
   NOT?: Maybe<CommentWhereInput[] | CommentWhereInput>;
 }
 
-export interface PostWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  createdBy?: Maybe<UserWhereInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  likes_every?: Maybe<UserWhereInput>;
-  likes_some?: Maybe<UserWhereInput>;
-  likes_none?: Maybe<UserWhereInput>;
-  comments_every?: Maybe<CommentWhereInput>;
-  comments_some?: Maybe<CommentWhereInput>;
-  comments_none?: Maybe<CommentWhereInput>;
-  AND?: Maybe<PostWhereInput[] | PostWhereInput>;
-  OR?: Maybe<PostWhereInput[] | PostWhereInput>;
-  NOT?: Maybe<PostWhereInput[] | PostWhereInput>;
-}
-
-export type ConversationWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export type FriendRequestWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
 export interface FriendRequestWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
@@ -663,6 +640,58 @@ export interface FriendRequestWhereInput {
   OR?: Maybe<FriendRequestWhereInput[] | FriendRequestWhereInput>;
   NOT?: Maybe<FriendRequestWhereInput[] | FriendRequestWhereInput>;
 }
+
+export interface MessageWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  user?: Maybe<UserWhereInput>;
+  conversation?: Maybe<ConversationWhereInput>;
+  content?: Maybe<String>;
+  content_not?: Maybe<String>;
+  content_in?: Maybe<String[] | String>;
+  content_not_in?: Maybe<String[] | String>;
+  content_lt?: Maybe<String>;
+  content_lte?: Maybe<String>;
+  content_gt?: Maybe<String>;
+  content_gte?: Maybe<String>;
+  content_contains?: Maybe<String>;
+  content_not_contains?: Maybe<String>;
+  content_starts_with?: Maybe<String>;
+  content_not_starts_with?: Maybe<String>;
+  content_ends_with?: Maybe<String>;
+  content_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<MessageWhereInput[] | MessageWhereInput>;
+  OR?: Maybe<MessageWhereInput[] | MessageWhereInput>;
+  NOT?: Maybe<MessageWhereInput[] | MessageWhereInput>;
+}
+
+export type ConversationWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type FriendRequestWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
 
 export type MessageWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -717,22 +746,25 @@ export interface PostCreateOneWithoutCommentsInput {
 
 export interface PostCreateWithoutCommentsInput {
   id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneInput;
+  createdBy: UserCreateOneWithoutPostsInput;
+  content: String;
   likes?: Maybe<UserCreateManyInput>;
 }
 
-export interface UserCreateOneInput {
-  create?: Maybe<UserCreateInput>;
+export interface UserCreateOneWithoutPostsInput {
+  create?: Maybe<UserCreateWithoutPostsInput>;
   connect?: Maybe<UserWhereUniqueInput>;
 }
 
-export interface UserCreateInput {
+export interface UserCreateWithoutPostsInput {
   id?: Maybe<ID_Input>;
   fullName: String;
   email: String;
   password: String;
   conversations?: Maybe<ConversationCreateManyWithoutUsersInput>;
   friends?: Maybe<UserCreateManyInput>;
+  outgoingFriendRequests?: Maybe<FriendRequestCreateManyWithoutFromUserInput>;
+  incomingFriendRequests?: Maybe<FriendRequestCreateManyWithoutToUserInput>;
 }
 
 export interface ConversationCreateManyWithoutUsersInput {
@@ -763,9 +795,117 @@ export interface MessageCreateWithoutConversationInput {
   content: String;
 }
 
+export interface UserCreateOneInput {
+  create?: Maybe<UserCreateInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserCreateInput {
+  id?: Maybe<ID_Input>;
+  fullName: String;
+  email: String;
+  password: String;
+  conversations?: Maybe<ConversationCreateManyWithoutUsersInput>;
+  friends?: Maybe<UserCreateManyInput>;
+  posts?: Maybe<PostCreateManyWithoutCreatedByInput>;
+  outgoingFriendRequests?: Maybe<FriendRequestCreateManyWithoutFromUserInput>;
+  incomingFriendRequests?: Maybe<FriendRequestCreateManyWithoutToUserInput>;
+}
+
 export interface UserCreateManyInput {
   create?: Maybe<UserCreateInput[] | UserCreateInput>;
   connect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+}
+
+export interface PostCreateManyWithoutCreatedByInput {
+  create?: Maybe<
+    PostCreateWithoutCreatedByInput[] | PostCreateWithoutCreatedByInput
+  >;
+  connect?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
+}
+
+export interface PostCreateWithoutCreatedByInput {
+  id?: Maybe<ID_Input>;
+  content: String;
+  likes?: Maybe<UserCreateManyInput>;
+  comments?: Maybe<CommentCreateManyWithoutPostInput>;
+}
+
+export interface CommentCreateManyWithoutPostInput {
+  create?: Maybe<
+    CommentCreateWithoutPostInput[] | CommentCreateWithoutPostInput
+  >;
+  connect?: Maybe<CommentWhereUniqueInput[] | CommentWhereUniqueInput>;
+}
+
+export interface CommentCreateWithoutPostInput {
+  id?: Maybe<ID_Input>;
+  createdBy: UserCreateOneInput;
+  content: String;
+}
+
+export interface FriendRequestCreateManyWithoutFromUserInput {
+  create?: Maybe<
+    | FriendRequestCreateWithoutFromUserInput[]
+    | FriendRequestCreateWithoutFromUserInput
+  >;
+  connect?: Maybe<
+    FriendRequestWhereUniqueInput[] | FriendRequestWhereUniqueInput
+  >;
+}
+
+export interface FriendRequestCreateWithoutFromUserInput {
+  id?: Maybe<ID_Input>;
+  toUser: UserCreateOneWithoutIncomingFriendRequestsInput;
+  accepted?: Maybe<Boolean>;
+}
+
+export interface UserCreateOneWithoutIncomingFriendRequestsInput {
+  create?: Maybe<UserCreateWithoutIncomingFriendRequestsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserCreateWithoutIncomingFriendRequestsInput {
+  id?: Maybe<ID_Input>;
+  fullName: String;
+  email: String;
+  password: String;
+  conversations?: Maybe<ConversationCreateManyWithoutUsersInput>;
+  friends?: Maybe<UserCreateManyInput>;
+  posts?: Maybe<PostCreateManyWithoutCreatedByInput>;
+  outgoingFriendRequests?: Maybe<FriendRequestCreateManyWithoutFromUserInput>;
+}
+
+export interface FriendRequestCreateManyWithoutToUserInput {
+  create?: Maybe<
+    | FriendRequestCreateWithoutToUserInput[]
+    | FriendRequestCreateWithoutToUserInput
+  >;
+  connect?: Maybe<
+    FriendRequestWhereUniqueInput[] | FriendRequestWhereUniqueInput
+  >;
+}
+
+export interface FriendRequestCreateWithoutToUserInput {
+  id?: Maybe<ID_Input>;
+  fromUser: UserCreateOneWithoutOutgoingFriendRequestsInput;
+  accepted?: Maybe<Boolean>;
+}
+
+export interface UserCreateOneWithoutOutgoingFriendRequestsInput {
+  create?: Maybe<UserCreateWithoutOutgoingFriendRequestsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserCreateWithoutOutgoingFriendRequestsInput {
+  id?: Maybe<ID_Input>;
+  fullName: String;
+  email: String;
+  password: String;
+  conversations?: Maybe<ConversationCreateManyWithoutUsersInput>;
+  friends?: Maybe<UserCreateManyInput>;
+  posts?: Maybe<PostCreateManyWithoutCreatedByInput>;
+  incomingFriendRequests?: Maybe<FriendRequestCreateManyWithoutToUserInput>;
 }
 
 export interface CommentUpdateInput {
@@ -782,23 +922,26 @@ export interface PostUpdateOneRequiredWithoutCommentsInput {
 }
 
 export interface PostUpdateWithoutCommentsDataInput {
-  createdBy?: Maybe<UserUpdateOneRequiredInput>;
+  createdBy?: Maybe<UserUpdateOneRequiredWithoutPostsInput>;
+  content?: Maybe<String>;
   likes?: Maybe<UserUpdateManyInput>;
 }
 
-export interface UserUpdateOneRequiredInput {
-  create?: Maybe<UserCreateInput>;
-  update?: Maybe<UserUpdateDataInput>;
-  upsert?: Maybe<UserUpsertNestedInput>;
+export interface UserUpdateOneRequiredWithoutPostsInput {
+  create?: Maybe<UserCreateWithoutPostsInput>;
+  update?: Maybe<UserUpdateWithoutPostsDataInput>;
+  upsert?: Maybe<UserUpsertWithoutPostsInput>;
   connect?: Maybe<UserWhereUniqueInput>;
 }
 
-export interface UserUpdateDataInput {
+export interface UserUpdateWithoutPostsDataInput {
   fullName?: Maybe<String>;
   email?: Maybe<String>;
   password?: Maybe<String>;
   conversations?: Maybe<ConversationUpdateManyWithoutUsersInput>;
   friends?: Maybe<UserUpdateManyInput>;
+  outgoingFriendRequests?: Maybe<FriendRequestUpdateManyWithoutFromUserInput>;
+  incomingFriendRequests?: Maybe<FriendRequestUpdateManyWithoutToUserInput>;
 }
 
 export interface ConversationUpdateManyWithoutUsersInput {
@@ -869,95 +1012,22 @@ export interface MessageUpdateWithoutConversationDataInput {
   content?: Maybe<String>;
 }
 
-export interface MessageUpsertWithWhereUniqueWithoutConversationInput {
-  where: MessageWhereUniqueInput;
-  update: MessageUpdateWithoutConversationDataInput;
-  create: MessageCreateWithoutConversationInput;
+export interface UserUpdateOneRequiredInput {
+  create?: Maybe<UserCreateInput>;
+  update?: Maybe<UserUpdateDataInput>;
+  upsert?: Maybe<UserUpsertNestedInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
 }
 
-export interface MessageScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  content?: Maybe<String>;
-  content_not?: Maybe<String>;
-  content_in?: Maybe<String[] | String>;
-  content_not_in?: Maybe<String[] | String>;
-  content_lt?: Maybe<String>;
-  content_lte?: Maybe<String>;
-  content_gt?: Maybe<String>;
-  content_gte?: Maybe<String>;
-  content_contains?: Maybe<String>;
-  content_not_contains?: Maybe<String>;
-  content_starts_with?: Maybe<String>;
-  content_not_starts_with?: Maybe<String>;
-  content_ends_with?: Maybe<String>;
-  content_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<MessageScalarWhereInput[] | MessageScalarWhereInput>;
-  OR?: Maybe<MessageScalarWhereInput[] | MessageScalarWhereInput>;
-  NOT?: Maybe<MessageScalarWhereInput[] | MessageScalarWhereInput>;
-}
-
-export interface MessageUpdateManyWithWhereNestedInput {
-  where: MessageScalarWhereInput;
-  data: MessageUpdateManyDataInput;
-}
-
-export interface MessageUpdateManyDataInput {
-  content?: Maybe<String>;
-}
-
-export interface ConversationUpsertWithWhereUniqueWithoutUsersInput {
-  where: ConversationWhereUniqueInput;
-  update: ConversationUpdateWithoutUsersDataInput;
-  create: ConversationCreateWithoutUsersInput;
-}
-
-export interface ConversationScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<ConversationScalarWhereInput[] | ConversationScalarWhereInput>;
-  OR?: Maybe<ConversationScalarWhereInput[] | ConversationScalarWhereInput>;
-  NOT?: Maybe<ConversationScalarWhereInput[] | ConversationScalarWhereInput>;
+export interface UserUpdateDataInput {
+  fullName?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  conversations?: Maybe<ConversationUpdateManyWithoutUsersInput>;
+  friends?: Maybe<UserUpdateManyInput>;
+  posts?: Maybe<PostUpdateManyWithoutCreatedByInput>;
+  outgoingFriendRequests?: Maybe<FriendRequestUpdateManyWithoutFromUserInput>;
+  incomingFriendRequests?: Maybe<FriendRequestUpdateManyWithoutToUserInput>;
 }
 
 export interface UserUpdateManyInput {
@@ -1064,168 +1134,35 @@ export interface UserUpdateManyDataInput {
   password?: Maybe<String>;
 }
 
-export interface UserUpsertNestedInput {
-  update: UserUpdateDataInput;
-  create: UserCreateInput;
-}
-
-export interface PostUpsertWithoutCommentsInput {
-  update: PostUpdateWithoutCommentsDataInput;
-  create: PostCreateWithoutCommentsInput;
-}
-
-export interface CommentUpdateManyMutationInput {
-  content?: Maybe<String>;
-}
-
-export interface ConversationCreateInput {
-  id?: Maybe<ID_Input>;
-  users?: Maybe<UserCreateManyWithoutConversationsInput>;
-  messages?: Maybe<MessageCreateManyWithoutConversationInput>;
-}
-
-export interface UserCreateManyWithoutConversationsInput {
+export interface PostUpdateManyWithoutCreatedByInput {
   create?: Maybe<
-    UserCreateWithoutConversationsInput[] | UserCreateWithoutConversationsInput
+    PostCreateWithoutCreatedByInput[] | PostCreateWithoutCreatedByInput
   >;
-  connect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
-}
-
-export interface UserCreateWithoutConversationsInput {
-  id?: Maybe<ID_Input>;
-  fullName: String;
-  email: String;
-  password: String;
-  friends?: Maybe<UserCreateManyInput>;
-}
-
-export interface ConversationUpdateInput {
-  users?: Maybe<UserUpdateManyWithoutConversationsInput>;
-  messages?: Maybe<MessageUpdateManyWithoutConversationInput>;
-}
-
-export interface UserUpdateManyWithoutConversationsInput {
-  create?: Maybe<
-    UserCreateWithoutConversationsInput[] | UserCreateWithoutConversationsInput
-  >;
-  delete?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
-  connect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
-  set?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
-  disconnect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  delete?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
+  connect?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
+  set?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
+  disconnect?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
   update?: Maybe<
-    | UserUpdateWithWhereUniqueWithoutConversationsInput[]
-    | UserUpdateWithWhereUniqueWithoutConversationsInput
+    | PostUpdateWithWhereUniqueWithoutCreatedByInput[]
+    | PostUpdateWithWhereUniqueWithoutCreatedByInput
   >;
   upsert?: Maybe<
-    | UserUpsertWithWhereUniqueWithoutConversationsInput[]
-    | UserUpsertWithWhereUniqueWithoutConversationsInput
+    | PostUpsertWithWhereUniqueWithoutCreatedByInput[]
+    | PostUpsertWithWhereUniqueWithoutCreatedByInput
   >;
-  deleteMany?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+  deleteMany?: Maybe<PostScalarWhereInput[] | PostScalarWhereInput>;
   updateMany?: Maybe<
-    UserUpdateManyWithWhereNestedInput[] | UserUpdateManyWithWhereNestedInput
+    PostUpdateManyWithWhereNestedInput[] | PostUpdateManyWithWhereNestedInput
   >;
 }
 
-export interface UserUpdateWithWhereUniqueWithoutConversationsInput {
-  where: UserWhereUniqueInput;
-  data: UserUpdateWithoutConversationsDataInput;
+export interface PostUpdateWithWhereUniqueWithoutCreatedByInput {
+  where: PostWhereUniqueInput;
+  data: PostUpdateWithoutCreatedByDataInput;
 }
 
-export interface UserUpdateWithoutConversationsDataInput {
-  fullName?: Maybe<String>;
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  friends?: Maybe<UserUpdateManyInput>;
-}
-
-export interface UserUpsertWithWhereUniqueWithoutConversationsInput {
-  where: UserWhereUniqueInput;
-  update: UserUpdateWithoutConversationsDataInput;
-  create: UserCreateWithoutConversationsInput;
-}
-
-export interface FriendRequestCreateInput {
-  id?: Maybe<ID_Input>;
-  fromUser: UserCreateOneInput;
-  toUser: UserCreateOneInput;
-  accepted?: Maybe<Boolean>;
-}
-
-export interface FriendRequestUpdateInput {
-  fromUser?: Maybe<UserUpdateOneRequiredInput>;
-  toUser?: Maybe<UserUpdateOneRequiredInput>;
-  accepted?: Maybe<Boolean>;
-}
-
-export interface FriendRequestUpdateManyMutationInput {
-  accepted?: Maybe<Boolean>;
-}
-
-export interface MessageCreateInput {
-  id?: Maybe<ID_Input>;
-  user: UserCreateOneInput;
-  conversation: ConversationCreateOneWithoutMessagesInput;
-  content: String;
-}
-
-export interface ConversationCreateOneWithoutMessagesInput {
-  create?: Maybe<ConversationCreateWithoutMessagesInput>;
-  connect?: Maybe<ConversationWhereUniqueInput>;
-}
-
-export interface ConversationCreateWithoutMessagesInput {
-  id?: Maybe<ID_Input>;
-  users?: Maybe<UserCreateManyWithoutConversationsInput>;
-}
-
-export interface MessageUpdateInput {
-  user?: Maybe<UserUpdateOneRequiredInput>;
-  conversation?: Maybe<ConversationUpdateOneRequiredWithoutMessagesInput>;
+export interface PostUpdateWithoutCreatedByDataInput {
   content?: Maybe<String>;
-}
-
-export interface ConversationUpdateOneRequiredWithoutMessagesInput {
-  create?: Maybe<ConversationCreateWithoutMessagesInput>;
-  update?: Maybe<ConversationUpdateWithoutMessagesDataInput>;
-  upsert?: Maybe<ConversationUpsertWithoutMessagesInput>;
-  connect?: Maybe<ConversationWhereUniqueInput>;
-}
-
-export interface ConversationUpdateWithoutMessagesDataInput {
-  users?: Maybe<UserUpdateManyWithoutConversationsInput>;
-}
-
-export interface ConversationUpsertWithoutMessagesInput {
-  update: ConversationUpdateWithoutMessagesDataInput;
-  create: ConversationCreateWithoutMessagesInput;
-}
-
-export interface MessageUpdateManyMutationInput {
-  content?: Maybe<String>;
-}
-
-export interface PostCreateInput {
-  id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneInput;
-  likes?: Maybe<UserCreateManyInput>;
-  comments?: Maybe<CommentCreateManyWithoutPostInput>;
-}
-
-export interface CommentCreateManyWithoutPostInput {
-  create?: Maybe<
-    CommentCreateWithoutPostInput[] | CommentCreateWithoutPostInput
-  >;
-  connect?: Maybe<CommentWhereUniqueInput[] | CommentWhereUniqueInput>;
-}
-
-export interface CommentCreateWithoutPostInput {
-  id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneInput;
-  content: String;
-}
-
-export interface PostUpdateInput {
-  createdBy?: Maybe<UserUpdateOneRequiredInput>;
   likes?: Maybe<UserUpdateManyInput>;
   comments?: Maybe<CommentUpdateManyWithoutPostInput>;
 }
@@ -1320,6 +1257,503 @@ export interface CommentUpdateManyDataInput {
   content?: Maybe<String>;
 }
 
+export interface PostUpsertWithWhereUniqueWithoutCreatedByInput {
+  where: PostWhereUniqueInput;
+  update: PostUpdateWithoutCreatedByDataInput;
+  create: PostCreateWithoutCreatedByInput;
+}
+
+export interface PostScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  content?: Maybe<String>;
+  content_not?: Maybe<String>;
+  content_in?: Maybe<String[] | String>;
+  content_not_in?: Maybe<String[] | String>;
+  content_lt?: Maybe<String>;
+  content_lte?: Maybe<String>;
+  content_gt?: Maybe<String>;
+  content_gte?: Maybe<String>;
+  content_contains?: Maybe<String>;
+  content_not_contains?: Maybe<String>;
+  content_starts_with?: Maybe<String>;
+  content_not_starts_with?: Maybe<String>;
+  content_ends_with?: Maybe<String>;
+  content_not_ends_with?: Maybe<String>;
+  AND?: Maybe<PostScalarWhereInput[] | PostScalarWhereInput>;
+  OR?: Maybe<PostScalarWhereInput[] | PostScalarWhereInput>;
+  NOT?: Maybe<PostScalarWhereInput[] | PostScalarWhereInput>;
+}
+
+export interface PostUpdateManyWithWhereNestedInput {
+  where: PostScalarWhereInput;
+  data: PostUpdateManyDataInput;
+}
+
+export interface PostUpdateManyDataInput {
+  content?: Maybe<String>;
+}
+
+export interface FriendRequestUpdateManyWithoutFromUserInput {
+  create?: Maybe<
+    | FriendRequestCreateWithoutFromUserInput[]
+    | FriendRequestCreateWithoutFromUserInput
+  >;
+  delete?: Maybe<
+    FriendRequestWhereUniqueInput[] | FriendRequestWhereUniqueInput
+  >;
+  connect?: Maybe<
+    FriendRequestWhereUniqueInput[] | FriendRequestWhereUniqueInput
+  >;
+  set?: Maybe<FriendRequestWhereUniqueInput[] | FriendRequestWhereUniqueInput>;
+  disconnect?: Maybe<
+    FriendRequestWhereUniqueInput[] | FriendRequestWhereUniqueInput
+  >;
+  update?: Maybe<
+    | FriendRequestUpdateWithWhereUniqueWithoutFromUserInput[]
+    | FriendRequestUpdateWithWhereUniqueWithoutFromUserInput
+  >;
+  upsert?: Maybe<
+    | FriendRequestUpsertWithWhereUniqueWithoutFromUserInput[]
+    | FriendRequestUpsertWithWhereUniqueWithoutFromUserInput
+  >;
+  deleteMany?: Maybe<
+    FriendRequestScalarWhereInput[] | FriendRequestScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | FriendRequestUpdateManyWithWhereNestedInput[]
+    | FriendRequestUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface FriendRequestUpdateWithWhereUniqueWithoutFromUserInput {
+  where: FriendRequestWhereUniqueInput;
+  data: FriendRequestUpdateWithoutFromUserDataInput;
+}
+
+export interface FriendRequestUpdateWithoutFromUserDataInput {
+  toUser?: Maybe<UserUpdateOneRequiredWithoutIncomingFriendRequestsInput>;
+  accepted?: Maybe<Boolean>;
+}
+
+export interface UserUpdateOneRequiredWithoutIncomingFriendRequestsInput {
+  create?: Maybe<UserCreateWithoutIncomingFriendRequestsInput>;
+  update?: Maybe<UserUpdateWithoutIncomingFriendRequestsDataInput>;
+  upsert?: Maybe<UserUpsertWithoutIncomingFriendRequestsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpdateWithoutIncomingFriendRequestsDataInput {
+  fullName?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  conversations?: Maybe<ConversationUpdateManyWithoutUsersInput>;
+  friends?: Maybe<UserUpdateManyInput>;
+  posts?: Maybe<PostUpdateManyWithoutCreatedByInput>;
+  outgoingFriendRequests?: Maybe<FriendRequestUpdateManyWithoutFromUserInput>;
+}
+
+export interface UserUpsertWithoutIncomingFriendRequestsInput {
+  update: UserUpdateWithoutIncomingFriendRequestsDataInput;
+  create: UserCreateWithoutIncomingFriendRequestsInput;
+}
+
+export interface FriendRequestUpsertWithWhereUniqueWithoutFromUserInput {
+  where: FriendRequestWhereUniqueInput;
+  update: FriendRequestUpdateWithoutFromUserDataInput;
+  create: FriendRequestCreateWithoutFromUserInput;
+}
+
+export interface FriendRequestScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  accepted?: Maybe<Boolean>;
+  accepted_not?: Maybe<Boolean>;
+  AND?: Maybe<FriendRequestScalarWhereInput[] | FriendRequestScalarWhereInput>;
+  OR?: Maybe<FriendRequestScalarWhereInput[] | FriendRequestScalarWhereInput>;
+  NOT?: Maybe<FriendRequestScalarWhereInput[] | FriendRequestScalarWhereInput>;
+}
+
+export interface FriendRequestUpdateManyWithWhereNestedInput {
+  where: FriendRequestScalarWhereInput;
+  data: FriendRequestUpdateManyDataInput;
+}
+
+export interface FriendRequestUpdateManyDataInput {
+  accepted?: Maybe<Boolean>;
+}
+
+export interface FriendRequestUpdateManyWithoutToUserInput {
+  create?: Maybe<
+    | FriendRequestCreateWithoutToUserInput[]
+    | FriendRequestCreateWithoutToUserInput
+  >;
+  delete?: Maybe<
+    FriendRequestWhereUniqueInput[] | FriendRequestWhereUniqueInput
+  >;
+  connect?: Maybe<
+    FriendRequestWhereUniqueInput[] | FriendRequestWhereUniqueInput
+  >;
+  set?: Maybe<FriendRequestWhereUniqueInput[] | FriendRequestWhereUniqueInput>;
+  disconnect?: Maybe<
+    FriendRequestWhereUniqueInput[] | FriendRequestWhereUniqueInput
+  >;
+  update?: Maybe<
+    | FriendRequestUpdateWithWhereUniqueWithoutToUserInput[]
+    | FriendRequestUpdateWithWhereUniqueWithoutToUserInput
+  >;
+  upsert?: Maybe<
+    | FriendRequestUpsertWithWhereUniqueWithoutToUserInput[]
+    | FriendRequestUpsertWithWhereUniqueWithoutToUserInput
+  >;
+  deleteMany?: Maybe<
+    FriendRequestScalarWhereInput[] | FriendRequestScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | FriendRequestUpdateManyWithWhereNestedInput[]
+    | FriendRequestUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface FriendRequestUpdateWithWhereUniqueWithoutToUserInput {
+  where: FriendRequestWhereUniqueInput;
+  data: FriendRequestUpdateWithoutToUserDataInput;
+}
+
+export interface FriendRequestUpdateWithoutToUserDataInput {
+  fromUser?: Maybe<UserUpdateOneRequiredWithoutOutgoingFriendRequestsInput>;
+  accepted?: Maybe<Boolean>;
+}
+
+export interface UserUpdateOneRequiredWithoutOutgoingFriendRequestsInput {
+  create?: Maybe<UserCreateWithoutOutgoingFriendRequestsInput>;
+  update?: Maybe<UserUpdateWithoutOutgoingFriendRequestsDataInput>;
+  upsert?: Maybe<UserUpsertWithoutOutgoingFriendRequestsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpdateWithoutOutgoingFriendRequestsDataInput {
+  fullName?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  conversations?: Maybe<ConversationUpdateManyWithoutUsersInput>;
+  friends?: Maybe<UserUpdateManyInput>;
+  posts?: Maybe<PostUpdateManyWithoutCreatedByInput>;
+  incomingFriendRequests?: Maybe<FriendRequestUpdateManyWithoutToUserInput>;
+}
+
+export interface UserUpsertWithoutOutgoingFriendRequestsInput {
+  update: UserUpdateWithoutOutgoingFriendRequestsDataInput;
+  create: UserCreateWithoutOutgoingFriendRequestsInput;
+}
+
+export interface FriendRequestUpsertWithWhereUniqueWithoutToUserInput {
+  where: FriendRequestWhereUniqueInput;
+  update: FriendRequestUpdateWithoutToUserDataInput;
+  create: FriendRequestCreateWithoutToUserInput;
+}
+
+export interface UserUpsertNestedInput {
+  update: UserUpdateDataInput;
+  create: UserCreateInput;
+}
+
+export interface MessageUpsertWithWhereUniqueWithoutConversationInput {
+  where: MessageWhereUniqueInput;
+  update: MessageUpdateWithoutConversationDataInput;
+  create: MessageCreateWithoutConversationInput;
+}
+
+export interface MessageScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  content?: Maybe<String>;
+  content_not?: Maybe<String>;
+  content_in?: Maybe<String[] | String>;
+  content_not_in?: Maybe<String[] | String>;
+  content_lt?: Maybe<String>;
+  content_lte?: Maybe<String>;
+  content_gt?: Maybe<String>;
+  content_gte?: Maybe<String>;
+  content_contains?: Maybe<String>;
+  content_not_contains?: Maybe<String>;
+  content_starts_with?: Maybe<String>;
+  content_not_starts_with?: Maybe<String>;
+  content_ends_with?: Maybe<String>;
+  content_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<MessageScalarWhereInput[] | MessageScalarWhereInput>;
+  OR?: Maybe<MessageScalarWhereInput[] | MessageScalarWhereInput>;
+  NOT?: Maybe<MessageScalarWhereInput[] | MessageScalarWhereInput>;
+}
+
+export interface MessageUpdateManyWithWhereNestedInput {
+  where: MessageScalarWhereInput;
+  data: MessageUpdateManyDataInput;
+}
+
+export interface MessageUpdateManyDataInput {
+  content?: Maybe<String>;
+}
+
+export interface ConversationUpsertWithWhereUniqueWithoutUsersInput {
+  where: ConversationWhereUniqueInput;
+  update: ConversationUpdateWithoutUsersDataInput;
+  create: ConversationCreateWithoutUsersInput;
+}
+
+export interface ConversationScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<ConversationScalarWhereInput[] | ConversationScalarWhereInput>;
+  OR?: Maybe<ConversationScalarWhereInput[] | ConversationScalarWhereInput>;
+  NOT?: Maybe<ConversationScalarWhereInput[] | ConversationScalarWhereInput>;
+}
+
+export interface UserUpsertWithoutPostsInput {
+  update: UserUpdateWithoutPostsDataInput;
+  create: UserCreateWithoutPostsInput;
+}
+
+export interface PostUpsertWithoutCommentsInput {
+  update: PostUpdateWithoutCommentsDataInput;
+  create: PostCreateWithoutCommentsInput;
+}
+
+export interface CommentUpdateManyMutationInput {
+  content?: Maybe<String>;
+}
+
+export interface ConversationCreateInput {
+  id?: Maybe<ID_Input>;
+  users?: Maybe<UserCreateManyWithoutConversationsInput>;
+  messages?: Maybe<MessageCreateManyWithoutConversationInput>;
+}
+
+export interface UserCreateManyWithoutConversationsInput {
+  create?: Maybe<
+    UserCreateWithoutConversationsInput[] | UserCreateWithoutConversationsInput
+  >;
+  connect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+}
+
+export interface UserCreateWithoutConversationsInput {
+  id?: Maybe<ID_Input>;
+  fullName: String;
+  email: String;
+  password: String;
+  friends?: Maybe<UserCreateManyInput>;
+  posts?: Maybe<PostCreateManyWithoutCreatedByInput>;
+  outgoingFriendRequests?: Maybe<FriendRequestCreateManyWithoutFromUserInput>;
+  incomingFriendRequests?: Maybe<FriendRequestCreateManyWithoutToUserInput>;
+}
+
+export interface ConversationUpdateInput {
+  users?: Maybe<UserUpdateManyWithoutConversationsInput>;
+  messages?: Maybe<MessageUpdateManyWithoutConversationInput>;
+}
+
+export interface UserUpdateManyWithoutConversationsInput {
+  create?: Maybe<
+    UserCreateWithoutConversationsInput[] | UserCreateWithoutConversationsInput
+  >;
+  delete?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  connect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  set?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  disconnect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  update?: Maybe<
+    | UserUpdateWithWhereUniqueWithoutConversationsInput[]
+    | UserUpdateWithWhereUniqueWithoutConversationsInput
+  >;
+  upsert?: Maybe<
+    | UserUpsertWithWhereUniqueWithoutConversationsInput[]
+    | UserUpsertWithWhereUniqueWithoutConversationsInput
+  >;
+  deleteMany?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+  updateMany?: Maybe<
+    UserUpdateManyWithWhereNestedInput[] | UserUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface UserUpdateWithWhereUniqueWithoutConversationsInput {
+  where: UserWhereUniqueInput;
+  data: UserUpdateWithoutConversationsDataInput;
+}
+
+export interface UserUpdateWithoutConversationsDataInput {
+  fullName?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  friends?: Maybe<UserUpdateManyInput>;
+  posts?: Maybe<PostUpdateManyWithoutCreatedByInput>;
+  outgoingFriendRequests?: Maybe<FriendRequestUpdateManyWithoutFromUserInput>;
+  incomingFriendRequests?: Maybe<FriendRequestUpdateManyWithoutToUserInput>;
+}
+
+export interface UserUpsertWithWhereUniqueWithoutConversationsInput {
+  where: UserWhereUniqueInput;
+  update: UserUpdateWithoutConversationsDataInput;
+  create: UserCreateWithoutConversationsInput;
+}
+
+export interface FriendRequestCreateInput {
+  id?: Maybe<ID_Input>;
+  fromUser: UserCreateOneWithoutOutgoingFriendRequestsInput;
+  toUser: UserCreateOneWithoutIncomingFriendRequestsInput;
+  accepted?: Maybe<Boolean>;
+}
+
+export interface FriendRequestUpdateInput {
+  fromUser?: Maybe<UserUpdateOneRequiredWithoutOutgoingFriendRequestsInput>;
+  toUser?: Maybe<UserUpdateOneRequiredWithoutIncomingFriendRequestsInput>;
+  accepted?: Maybe<Boolean>;
+}
+
+export interface FriendRequestUpdateManyMutationInput {
+  accepted?: Maybe<Boolean>;
+}
+
+export interface MessageCreateInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  conversation: ConversationCreateOneWithoutMessagesInput;
+  content: String;
+}
+
+export interface ConversationCreateOneWithoutMessagesInput {
+  create?: Maybe<ConversationCreateWithoutMessagesInput>;
+  connect?: Maybe<ConversationWhereUniqueInput>;
+}
+
+export interface ConversationCreateWithoutMessagesInput {
+  id?: Maybe<ID_Input>;
+  users?: Maybe<UserCreateManyWithoutConversationsInput>;
+}
+
+export interface MessageUpdateInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  conversation?: Maybe<ConversationUpdateOneRequiredWithoutMessagesInput>;
+  content?: Maybe<String>;
+}
+
+export interface ConversationUpdateOneRequiredWithoutMessagesInput {
+  create?: Maybe<ConversationCreateWithoutMessagesInput>;
+  update?: Maybe<ConversationUpdateWithoutMessagesDataInput>;
+  upsert?: Maybe<ConversationUpsertWithoutMessagesInput>;
+  connect?: Maybe<ConversationWhereUniqueInput>;
+}
+
+export interface ConversationUpdateWithoutMessagesDataInput {
+  users?: Maybe<UserUpdateManyWithoutConversationsInput>;
+}
+
+export interface ConversationUpsertWithoutMessagesInput {
+  update: ConversationUpdateWithoutMessagesDataInput;
+  create: ConversationCreateWithoutMessagesInput;
+}
+
+export interface MessageUpdateManyMutationInput {
+  content?: Maybe<String>;
+}
+
+export interface PostCreateInput {
+  id?: Maybe<ID_Input>;
+  createdBy: UserCreateOneWithoutPostsInput;
+  content: String;
+  likes?: Maybe<UserCreateManyInput>;
+  comments?: Maybe<CommentCreateManyWithoutPostInput>;
+}
+
+export interface PostUpdateInput {
+  createdBy?: Maybe<UserUpdateOneRequiredWithoutPostsInput>;
+  content?: Maybe<String>;
+  likes?: Maybe<UserUpdateManyInput>;
+  comments?: Maybe<CommentUpdateManyWithoutPostInput>;
+}
+
+export interface PostUpdateManyMutationInput {
+  content?: Maybe<String>;
+}
+
 export interface UnreadConversationsCreateInput {
   id?: Maybe<ID_Input>;
   conversation: ConversationCreateOneInput;
@@ -1359,6 +1793,9 @@ export interface UserUpdateInput {
   password?: Maybe<String>;
   conversations?: Maybe<ConversationUpdateManyWithoutUsersInput>;
   friends?: Maybe<UserUpdateManyInput>;
+  posts?: Maybe<PostUpdateManyWithoutCreatedByInput>;
+  outgoingFriendRequests?: Maybe<FriendRequestUpdateManyWithoutFromUserInput>;
+  incomingFriendRequests?: Maybe<FriendRequestUpdateManyWithoutToUserInput>;
 }
 
 export interface UserUpdateManyMutationInput {
@@ -1506,12 +1943,14 @@ export interface CommentNullablePromise
 export interface Post {
   id: ID_Output;
   createdAt: DateTimeOutput;
+  content: String;
 }
 
 export interface PostPromise extends Promise<Post>, Fragmentable {
   id: () => Promise<ID_Output>;
   createdBy: <T = UserPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
+  content: () => Promise<String>;
   likes: <T = FragmentableArray<User>>(args?: {
     where?: UserWhereInput;
     orderBy?: UserOrderByInput;
@@ -1538,6 +1977,7 @@ export interface PostSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   createdBy: <T = UserSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  content: () => Promise<AsyncIterator<String>>;
   likes: <T = Promise<AsyncIterator<UserSubscription>>>(args?: {
     where?: UserWhereInput;
     orderBy?: UserOrderByInput;
@@ -1564,6 +2004,7 @@ export interface PostNullablePromise
   id: () => Promise<ID_Output>;
   createdBy: <T = UserPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
+  content: () => Promise<String>;
   likes: <T = FragmentableArray<User>>(args?: {
     where?: UserWhereInput;
     orderBy?: UserOrderByInput;
@@ -1614,6 +2055,33 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  posts: <T = FragmentableArray<Post>>(args?: {
+    where?: PostWhereInput;
+    orderBy?: PostOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  outgoingFriendRequests: <T = FragmentableArray<FriendRequest>>(args?: {
+    where?: FriendRequestWhereInput;
+    orderBy?: FriendRequestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  incomingFriendRequests: <T = FragmentableArray<FriendRequest>>(args?: {
+    where?: FriendRequestWhereInput;
+    orderBy?: FriendRequestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface UserSubscription
@@ -1641,6 +2109,37 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  posts: <T = Promise<AsyncIterator<PostSubscription>>>(args?: {
+    where?: PostWhereInput;
+    orderBy?: PostOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  outgoingFriendRequests: <
+    T = Promise<AsyncIterator<FriendRequestSubscription>>
+  >(args?: {
+    where?: FriendRequestWhereInput;
+    orderBy?: FriendRequestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  incomingFriendRequests: <
+    T = Promise<AsyncIterator<FriendRequestSubscription>>
+  >(args?: {
+    where?: FriendRequestWhereInput;
+    orderBy?: FriendRequestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface UserNullablePromise
@@ -1662,6 +2161,33 @@ export interface UserNullablePromise
   friends: <T = FragmentableArray<User>>(args?: {
     where?: UserWhereInput;
     orderBy?: UserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  posts: <T = FragmentableArray<Post>>(args?: {
+    where?: PostWhereInput;
+    orderBy?: PostOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  outgoingFriendRequests: <T = FragmentableArray<FriendRequest>>(args?: {
+    where?: FriendRequestWhereInput;
+    orderBy?: FriendRequestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  incomingFriendRequests: <T = FragmentableArray<FriendRequest>>(args?: {
+    where?: FriendRequestWhereInput;
+    orderBy?: FriendRequestOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -1782,6 +2308,42 @@ export interface MessageNullablePromise
   conversation: <T = ConversationPromise>() => T;
   content: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
+}
+
+export interface FriendRequest {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  accepted: Boolean;
+}
+
+export interface FriendRequestPromise
+  extends Promise<FriendRequest>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  fromUser: <T = UserPromise>() => T;
+  toUser: <T = UserPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  accepted: () => Promise<Boolean>;
+}
+
+export interface FriendRequestSubscription
+  extends Promise<AsyncIterator<FriendRequest>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  fromUser: <T = UserSubscription>() => T;
+  toUser: <T = UserSubscription>() => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  accepted: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface FriendRequestNullablePromise
+  extends Promise<FriendRequest | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  fromUser: <T = UserPromise>() => T;
+  toUser: <T = UserPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  accepted: () => Promise<Boolean>;
 }
 
 export interface CommentConnection {
@@ -1915,42 +2477,6 @@ export interface AggregateConversationSubscription
   extends Promise<AsyncIterator<AggregateConversation>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface FriendRequest {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  accepted: Boolean;
-}
-
-export interface FriendRequestPromise
-  extends Promise<FriendRequest>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  fromUser: <T = UserPromise>() => T;
-  toUser: <T = UserPromise>() => T;
-  createdAt: () => Promise<DateTimeOutput>;
-  accepted: () => Promise<Boolean>;
-}
-
-export interface FriendRequestSubscription
-  extends Promise<AsyncIterator<FriendRequest>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  fromUser: <T = UserSubscription>() => T;
-  toUser: <T = UserSubscription>() => T;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  accepted: () => Promise<AsyncIterator<Boolean>>;
-}
-
-export interface FriendRequestNullablePromise
-  extends Promise<FriendRequest | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  fromUser: <T = UserPromise>() => T;
-  toUser: <T = UserPromise>() => T;
-  createdAt: () => Promise<DateTimeOutput>;
-  accepted: () => Promise<Boolean>;
 }
 
 export interface FriendRequestConnection {
@@ -2486,6 +3012,7 @@ export interface PostSubscriptionPayloadSubscription
 export interface PostPreviousValues {
   id: ID_Output;
   createdAt: DateTimeOutput;
+  content: String;
 }
 
 export interface PostPreviousValuesPromise
@@ -2493,6 +3020,7 @@ export interface PostPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
+  content: () => Promise<String>;
 }
 
 export interface PostPreviousValuesSubscription
@@ -2500,6 +3028,7 @@ export interface PostPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  content: () => Promise<AsyncIterator<String>>;
 }
 
 export interface UnreadConversationsSubscriptionPayload {
@@ -2615,14 +3144,14 @@ DateTime scalar output type, which is always a string
 export type DateTimeOutput = string;
 
 /*
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-*/
-export type Int = number;
-
-/*
 The `Boolean` scalar type represents `true` or `false`.
 */
 export type Boolean = boolean;
+
+/*
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+*/
+export type Int = number;
 
 export type Long = string;
 

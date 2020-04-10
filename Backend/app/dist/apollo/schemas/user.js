@@ -34,8 +34,8 @@ exports.typeDef = apollo_server_express_1.gql `
         id: ID!
         fullName: String!
         email: String!
-        conversations: [ Conversation ]!
         friends: [ User ]!
+        posts: [ Post ]!
     }
     type loginResponse {
         success: Boolean!
@@ -44,9 +44,6 @@ exports.typeDef = apollo_server_express_1.gql `
     type registerResponse {
         success: Boolean!
         user: User
-    }
-    type Conversation {
-        derp: String
     }
 
 `;
