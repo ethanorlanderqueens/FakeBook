@@ -29,7 +29,7 @@ exports.typeDef = apollo_server_express_1.gql `
         email: String!
         password: String!
     }
-
+    //TODO Add conversations, outgoingFriendRequests, incomingFriendRequests
     type User {
         id: ID!
         fullName: String!
