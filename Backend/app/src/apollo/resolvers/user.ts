@@ -46,5 +46,9 @@ export const resolvers = {
 			await prisma.user({ id: parent.id }).posts(),
 		friends: async (parent, args, { prisma }) =>
 			await prisma.user({ id: parent.id }).friends(),
+		incomingFriendRequests: async (parent, args, { prisma }) =>
+			await prisma.user({ id: parent.id }).incomingFriendRequests(),
+		outgoingFriendRequests: async (parent, args, { prisma }) =>
+			await prisma.user({ id: parent.id }).outgoingFriendRequests(),
 	},
 };

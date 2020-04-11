@@ -228,10 +228,6 @@ export interface Prisma {
     data: FriendRequestUpdateInput;
     where: FriendRequestWhereUniqueInput;
   }) => FriendRequestPromise;
-  updateManyFriendRequests: (args: {
-    data: FriendRequestUpdateManyMutationInput;
-    where?: FriendRequestWhereInput;
-  }) => BatchPayloadPromise;
   upsertFriendRequest: (args: {
     where: FriendRequestWhereUniqueInput;
     create: FriendRequestCreateInput;
@@ -385,9 +381,7 @@ export type FriendRequestOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "accepted_ASC"
-  | "accepted_DESC";
+  | "createdAt_DESC";
 
 export type CommentOrderByInput =
   | "id_ASC"
@@ -634,8 +628,6 @@ export interface FriendRequestWhereInput {
   createdAt_lte?: Maybe<DateTimeInput>;
   createdAt_gt?: Maybe<DateTimeInput>;
   createdAt_gte?: Maybe<DateTimeInput>;
-  accepted?: Maybe<Boolean>;
-  accepted_not?: Maybe<Boolean>;
   AND?: Maybe<FriendRequestWhereInput[] | FriendRequestWhereInput>;
   OR?: Maybe<FriendRequestWhereInput[] | FriendRequestWhereInput>;
   NOT?: Maybe<FriendRequestWhereInput[] | FriendRequestWhereInput>;
@@ -857,7 +849,6 @@ export interface FriendRequestCreateManyWithoutFromUserInput {
 export interface FriendRequestCreateWithoutFromUserInput {
   id?: Maybe<ID_Input>;
   toUser: UserCreateOneWithoutIncomingFriendRequestsInput;
-  accepted?: Maybe<Boolean>;
 }
 
 export interface UserCreateOneWithoutIncomingFriendRequestsInput {
@@ -889,7 +880,6 @@ export interface FriendRequestCreateManyWithoutToUserInput {
 export interface FriendRequestCreateWithoutToUserInput {
   id?: Maybe<ID_Input>;
   fromUser: UserCreateOneWithoutOutgoingFriendRequestsInput;
-  accepted?: Maybe<Boolean>;
 }
 
 export interface UserCreateOneWithoutOutgoingFriendRequestsInput {
@@ -1340,10 +1330,6 @@ export interface FriendRequestUpdateManyWithoutFromUserInput {
   deleteMany?: Maybe<
     FriendRequestScalarWhereInput[] | FriendRequestScalarWhereInput
   >;
-  updateMany?: Maybe<
-    | FriendRequestUpdateManyWithWhereNestedInput[]
-    | FriendRequestUpdateManyWithWhereNestedInput
-  >;
 }
 
 export interface FriendRequestUpdateWithWhereUniqueWithoutFromUserInput {
@@ -1353,7 +1339,6 @@ export interface FriendRequestUpdateWithWhereUniqueWithoutFromUserInput {
 
 export interface FriendRequestUpdateWithoutFromUserDataInput {
   toUser?: Maybe<UserUpdateOneRequiredWithoutIncomingFriendRequestsInput>;
-  accepted?: Maybe<Boolean>;
 }
 
 export interface UserUpdateOneRequiredWithoutIncomingFriendRequestsInput {
@@ -1407,20 +1392,9 @@ export interface FriendRequestScalarWhereInput {
   createdAt_lte?: Maybe<DateTimeInput>;
   createdAt_gt?: Maybe<DateTimeInput>;
   createdAt_gte?: Maybe<DateTimeInput>;
-  accepted?: Maybe<Boolean>;
-  accepted_not?: Maybe<Boolean>;
   AND?: Maybe<FriendRequestScalarWhereInput[] | FriendRequestScalarWhereInput>;
   OR?: Maybe<FriendRequestScalarWhereInput[] | FriendRequestScalarWhereInput>;
   NOT?: Maybe<FriendRequestScalarWhereInput[] | FriendRequestScalarWhereInput>;
-}
-
-export interface FriendRequestUpdateManyWithWhereNestedInput {
-  where: FriendRequestScalarWhereInput;
-  data: FriendRequestUpdateManyDataInput;
-}
-
-export interface FriendRequestUpdateManyDataInput {
-  accepted?: Maybe<Boolean>;
 }
 
 export interface FriendRequestUpdateManyWithoutToUserInput {
@@ -1449,10 +1423,6 @@ export interface FriendRequestUpdateManyWithoutToUserInput {
   deleteMany?: Maybe<
     FriendRequestScalarWhereInput[] | FriendRequestScalarWhereInput
   >;
-  updateMany?: Maybe<
-    | FriendRequestUpdateManyWithWhereNestedInput[]
-    | FriendRequestUpdateManyWithWhereNestedInput
-  >;
 }
 
 export interface FriendRequestUpdateWithWhereUniqueWithoutToUserInput {
@@ -1462,7 +1432,6 @@ export interface FriendRequestUpdateWithWhereUniqueWithoutToUserInput {
 
 export interface FriendRequestUpdateWithoutToUserDataInput {
   fromUser?: Maybe<UserUpdateOneRequiredWithoutOutgoingFriendRequestsInput>;
-  accepted?: Maybe<Boolean>;
 }
 
 export interface UserUpdateOneRequiredWithoutOutgoingFriendRequestsInput {
@@ -1679,17 +1648,11 @@ export interface FriendRequestCreateInput {
   id?: Maybe<ID_Input>;
   fromUser: UserCreateOneWithoutOutgoingFriendRequestsInput;
   toUser: UserCreateOneWithoutIncomingFriendRequestsInput;
-  accepted?: Maybe<Boolean>;
 }
 
 export interface FriendRequestUpdateInput {
   fromUser?: Maybe<UserUpdateOneRequiredWithoutOutgoingFriendRequestsInput>;
   toUser?: Maybe<UserUpdateOneRequiredWithoutIncomingFriendRequestsInput>;
-  accepted?: Maybe<Boolean>;
-}
-
-export interface FriendRequestUpdateManyMutationInput {
-  accepted?: Maybe<Boolean>;
 }
 
 export interface MessageCreateInput {
@@ -2313,7 +2276,6 @@ export interface MessageNullablePromise
 export interface FriendRequest {
   id: ID_Output;
   createdAt: DateTimeOutput;
-  accepted: Boolean;
 }
 
 export interface FriendRequestPromise
@@ -2323,7 +2285,6 @@ export interface FriendRequestPromise
   fromUser: <T = UserPromise>() => T;
   toUser: <T = UserPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
-  accepted: () => Promise<Boolean>;
 }
 
 export interface FriendRequestSubscription
@@ -2333,7 +2294,6 @@ export interface FriendRequestSubscription
   fromUser: <T = UserSubscription>() => T;
   toUser: <T = UserSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  accepted: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface FriendRequestNullablePromise
@@ -2343,7 +2303,6 @@ export interface FriendRequestNullablePromise
   fromUser: <T = UserPromise>() => T;
   toUser: <T = UserPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
-  accepted: () => Promise<Boolean>;
 }
 
 export interface CommentConnection {
@@ -2918,7 +2877,6 @@ export interface FriendRequestSubscriptionPayloadSubscription
 export interface FriendRequestPreviousValues {
   id: ID_Output;
   createdAt: DateTimeOutput;
-  accepted: Boolean;
 }
 
 export interface FriendRequestPreviousValuesPromise
@@ -2926,7 +2884,6 @@ export interface FriendRequestPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
-  accepted: () => Promise<Boolean>;
 }
 
 export interface FriendRequestPreviousValuesSubscription
@@ -2934,7 +2891,6 @@ export interface FriendRequestPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  accepted: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface MessageSubscriptionPayload {
@@ -3144,14 +3100,14 @@ DateTime scalar output type, which is always a string
 export type DateTimeOutput = string;
 
 /*
-The `Boolean` scalar type represents `true` or `false`.
-*/
-export type Boolean = boolean;
-
-/*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
 */
 export type Int = number;
+
+/*
+The `Boolean` scalar type represents `true` or `false`.
+*/
+export type Boolean = boolean;
 
 export type Long = string;
 

@@ -457,7 +457,6 @@ type FriendRequest {
   fromUser: User!
   toUser: User!
   createdAt: DateTime!
-  accepted: Boolean!
 }
 
 type FriendRequestConnection {
@@ -470,7 +469,6 @@ input FriendRequestCreateInput {
   id: ID
   fromUser: UserCreateOneWithoutOutgoingFriendRequestsInput!
   toUser: UserCreateOneWithoutIncomingFriendRequestsInput!
-  accepted: Boolean
 }
 
 input FriendRequestCreateManyWithoutFromUserInput {
@@ -486,13 +484,11 @@ input FriendRequestCreateManyWithoutToUserInput {
 input FriendRequestCreateWithoutFromUserInput {
   id: ID
   toUser: UserCreateOneWithoutIncomingFriendRequestsInput!
-  accepted: Boolean
 }
 
 input FriendRequestCreateWithoutToUserInput {
   id: ID
   fromUser: UserCreateOneWithoutOutgoingFriendRequestsInput!
-  accepted: Boolean
 }
 
 type FriendRequestEdge {
@@ -505,14 +501,11 @@ enum FriendRequestOrderByInput {
   id_DESC
   createdAt_ASC
   createdAt_DESC
-  accepted_ASC
-  accepted_DESC
 }
 
 type FriendRequestPreviousValues {
   id: ID!
   createdAt: DateTime!
-  accepted: Boolean!
 }
 
 input FriendRequestScalarWhereInput {
@@ -538,8 +531,6 @@ input FriendRequestScalarWhereInput {
   createdAt_lte: DateTime
   createdAt_gt: DateTime
   createdAt_gte: DateTime
-  accepted: Boolean
-  accepted_not: Boolean
   AND: [FriendRequestScalarWhereInput!]
   OR: [FriendRequestScalarWhereInput!]
   NOT: [FriendRequestScalarWhereInput!]
@@ -566,15 +557,6 @@ input FriendRequestSubscriptionWhereInput {
 input FriendRequestUpdateInput {
   fromUser: UserUpdateOneRequiredWithoutOutgoingFriendRequestsInput
   toUser: UserUpdateOneRequiredWithoutIncomingFriendRequestsInput
-  accepted: Boolean
-}
-
-input FriendRequestUpdateManyDataInput {
-  accepted: Boolean
-}
-
-input FriendRequestUpdateManyMutationInput {
-  accepted: Boolean
 }
 
 input FriendRequestUpdateManyWithoutFromUserInput {
@@ -586,7 +568,6 @@ input FriendRequestUpdateManyWithoutFromUserInput {
   update: [FriendRequestUpdateWithWhereUniqueWithoutFromUserInput!]
   upsert: [FriendRequestUpsertWithWhereUniqueWithoutFromUserInput!]
   deleteMany: [FriendRequestScalarWhereInput!]
-  updateMany: [FriendRequestUpdateManyWithWhereNestedInput!]
 }
 
 input FriendRequestUpdateManyWithoutToUserInput {
@@ -598,22 +579,14 @@ input FriendRequestUpdateManyWithoutToUserInput {
   update: [FriendRequestUpdateWithWhereUniqueWithoutToUserInput!]
   upsert: [FriendRequestUpsertWithWhereUniqueWithoutToUserInput!]
   deleteMany: [FriendRequestScalarWhereInput!]
-  updateMany: [FriendRequestUpdateManyWithWhereNestedInput!]
-}
-
-input FriendRequestUpdateManyWithWhereNestedInput {
-  where: FriendRequestScalarWhereInput!
-  data: FriendRequestUpdateManyDataInput!
 }
 
 input FriendRequestUpdateWithoutFromUserDataInput {
   toUser: UserUpdateOneRequiredWithoutIncomingFriendRequestsInput
-  accepted: Boolean
 }
 
 input FriendRequestUpdateWithoutToUserDataInput {
   fromUser: UserUpdateOneRequiredWithoutOutgoingFriendRequestsInput
-  accepted: Boolean
 }
 
 input FriendRequestUpdateWithWhereUniqueWithoutFromUserInput {
@@ -663,8 +636,6 @@ input FriendRequestWhereInput {
   createdAt_lte: DateTime
   createdAt_gt: DateTime
   createdAt_gte: DateTime
-  accepted: Boolean
-  accepted_not: Boolean
   AND: [FriendRequestWhereInput!]
   OR: [FriendRequestWhereInput!]
   NOT: [FriendRequestWhereInput!]
@@ -897,7 +868,6 @@ type Mutation {
   deleteManyConversations(where: ConversationWhereInput): BatchPayload!
   createFriendRequest(data: FriendRequestCreateInput!): FriendRequest!
   updateFriendRequest(data: FriendRequestUpdateInput!, where: FriendRequestWhereUniqueInput!): FriendRequest
-  updateManyFriendRequests(data: FriendRequestUpdateManyMutationInput!, where: FriendRequestWhereInput): BatchPayload!
   upsertFriendRequest(where: FriendRequestWhereUniqueInput!, create: FriendRequestCreateInput!, update: FriendRequestUpdateInput!): FriendRequest!
   deleteFriendRequest(where: FriendRequestWhereUniqueInput!): FriendRequest
   deleteManyFriendRequests(where: FriendRequestWhereInput): BatchPayload!

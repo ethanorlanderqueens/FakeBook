@@ -117,10 +117,7 @@ Mutations
     requestFriend(data: {
         fromUser: ID!
         toUser: ID!
-    }): {
-        friendRequest: FriendRequest
-        error: Error
-    }
+    }): FriendRequest
     removeFriend(data: {
         me: ID!
         friend: ID!
@@ -131,10 +128,7 @@ Mutations
     respondToFriendRequest(data: {
         friendRequest: ID!
         accept: Boolean!
-    }): {
-        friendRequest: FriendRequest
-        error: Error 
-    }
+    }): FriendRequest
     sendMessage(data: {
         conversationID: ID!
         userID: ID!

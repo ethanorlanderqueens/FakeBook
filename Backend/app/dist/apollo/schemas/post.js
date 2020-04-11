@@ -3,20 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const apollo_server_express_1 = require("apollo-server-express");
 exports.typeDef = apollo_server_express_1.gql `
     extend type Mutation {
-        createPost(data: createPostInput): Post
-        likePost(data: likePostInput): Post
-        addComment(data: addCommentInput): Comment
+        createPost(data: CreatePostInput): Post
+        likePost(data: LikePostInput): Post
+        addComment(data: AddCommentInput): Comment
     }
 
-    input createPostInput {
+    input CreatePostInput {
         createdByUserID: ID!
         content: String!
     }
-    input likePostInput {
+    input LikePostInput {
         userID: ID!
         postID: ID!
     }
-    input addCommentInput {
+    input AddCommentInput {
         userID: ID!
         postID: ID!
         content: String!
@@ -25,7 +25,7 @@ exports.typeDef = apollo_server_express_1.gql `
     type Post {
         id: ID!
         createdBy: User!
-        createdAt: Float!
+        createdAt: String!
         likes: [ User ]!
         comments: [ Comment ]!
         content: String!
@@ -34,7 +34,7 @@ exports.typeDef = apollo_server_express_1.gql `
         id: ID!
         post: Post!
         createdBy: User!
-        createdAt: Float!
+        createdAt: String!
         content: String!
     }
 `;

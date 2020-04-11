@@ -2,20 +2,20 @@ import { gql } from "apollo-server-express";
 
 export const typeDef = gql`
     extend type Mutation {
-        createPost(data: createPostInput): Post
-        likePost(data: likePostInput): Post
-        addComment(data: addCommentInput): Comment
+        createPost(data: CreatePostInput): Post
+        likePost(data: LikePostInput): Post
+        addComment(data: AddCommentInput): Comment
     }
 
-    input createPostInput {
+    input CreatePostInput {
         createdByUserID: ID!
         content: String!
     }
-    input likePostInput {
+    input LikePostInput {
         userID: ID!
         postID: ID!
     }
-    input addCommentInput {
+    input AddCommentInput {
         userID: ID!
         postID: ID!
         content: String!
@@ -24,7 +24,7 @@ export const typeDef = gql`
     type Post {
         id: ID!
         createdBy: User!
-        createdAt: Float!
+        createdAt: String!
         likes: [ User ]!
         comments: [ Comment ]!
         content: String!
@@ -33,7 +33,7 @@ export const typeDef = gql`
         id: ID!
         post: Post!
         createdBy: User!
-        createdAt: Float!
+        createdAt: String!
         content: String!
     }
 `;

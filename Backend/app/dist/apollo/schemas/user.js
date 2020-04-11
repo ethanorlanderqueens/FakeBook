@@ -2,46 +2,48 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const apollo_server_express_1 = require("apollo-server-express");
 exports.typeDef = apollo_server_express_1.gql `
-
     extend type Query {
-        login(data: loginInput): loginResponse
-        users(data: usersInput): [ User ]!
-        friends(data: friendsInput): [ User ]!
+        login(data: LoginInput): LoginResponse
+        users(data: UsersInput): [ User ]!
+        friends(data: FriendsInput): [ User ]!
     }
 
     extend type Mutation {
-        register(data: registerInput): registerResponse
+        register(data: RegisterInput): RegisterResponse
     }
 
-    input loginInput {
+    input LoginInput {
         email: String!
         password: String!
     }
-    input usersInput {
+    input UsersInput {
         id: ID
         fullName: String
     }
-    input friendsInput {
+    input FriendsInput {
         userID: ID!
     }
-    input registerInput {
+    input RegisterInput {
         fullName: String!
         email: String!
         password: String!
     }
-    # TODO Add conversations, outgoingFriendRequests, incomingFriendRequests
+
+    # TODO Add conversations
     type User {
         id: ID!
         fullName: String!
         email: String!
+        incomingFriendRequests: [ FriendRequest ]!
+        outgoingFriendRequests: [ FriendRequest ]!
         friends: [ User ]!
         posts: [ Post ]!
     }
-    type loginResponse {
+    type LoginResponse {
         success: Boolean!
         user: User
     }
-    type registerResponse {
+    type RegisterResponse {
         success: Boolean!
         user: User
     }

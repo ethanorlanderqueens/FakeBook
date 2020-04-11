@@ -32,7 +32,6 @@ type FriendRequest {
   fromUser: User! @relation(link: INLINE, name: "FriendRequestFromUser") 
   toUser: User! @relation(link: INLINE, name: "FriendRequestToUser")
   createdAt: DateTime! @createdAt
-  accepted: Boolean! @default(value: false)
 }
 
 type Conversation {
