@@ -21,19 +21,21 @@ exports.resolvers = {
             const friendRequest = await prisma.friendRequest({
                 id: args.data.friendRequestID,
             });
+            const toUser = await prisma.friendRequest({ id: args.data.friendRequestID }).toUser();
+            const fromUser = await prisma.friendRequest({ id: args.data.friendRequestID }).fromUser();
             if (args.data.accept) {
                 //Add from to to's friend list
                 await prisma.updateUser({
-                    where: { id: friendRequest.toUserID },
-                    data: { friends: { connect: { id: friendRequest.fromUserID } } },
+                    where: { id: toUser.id },
+                    data: { friends: { connect: { id: fromUser.id } } },
                 });
                 //Add to to from's friend list
                 await prisma.updateUser({
-                    where: { id: friendRequest.fromUserID },
-                    data: { friends: { connect: { id: friendRequest.toUserID } } },
+                    where: { id: fromUser.id },
+                    data: { friends: { connect: { id: toUser.id } } },
                 });
             }
-            return await prisma.deleteFriendRequest({ id: args.friendRequestID });
+            return await prisma.deleteFriendRequest({ id: args.data.friendRequestID });
         },
     },
     Query: {
